@@ -1,8 +1,14 @@
 package technicalblog.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import technicalblog.model.Post;
+import technicalblog.repository.PostRepository;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceUnit;
+import javax.persistence.TypedQuery;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Date;
@@ -11,12 +17,15 @@ import java.util.List;
 @Service
 public class PostService {
 
+    @Autowired
+    PostRepository repository;
+
     public PostService() {
         System.out.println("*** PostService ***");
     }
 
     public List<Post> getAllPosts() {
-        List<Post> posts = new ArrayList<>();
+        //List<Post> posts = new ArrayList<>();
         /*Post post1 = new Post();
         post1.setTitle("Post 1");
         post1.setBody("Post Body 1");
@@ -36,7 +45,8 @@ public class PostService {
         posts.add(post2);
         posts.add(post3);*/
 
-        Connection connection = null;
+
+        /*Connection connection = null;
         try {
             Class.forName("org.postgresql.Driver");
             connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/technicalblog",
@@ -59,7 +69,9 @@ public class PostService {
             }
         }
 
-        return posts;
+        return posts;*/
+
+        return repository.getAllPosts();
     }
 
     public ArrayList<Post> getOnePost() {
@@ -71,7 +83,7 @@ public class PostService {
         post1.setDate(new Date());
         posts.add(post1);*/
 
-        Connection connection = null;
+        /*Connection connection = null;
         try {
             Class.forName("org.postgresql.Driver");
             connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/technicalblog",
@@ -92,12 +104,29 @@ public class PostService {
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }
-        }
-
+        }*/
+        Post post = repository.getLatestPost();
+        posts.add(post);
         return posts;
 
     }
 
     public void createPost (Post newPost){
+        newPost.setDate(new Date());
+        repository.createPost(newPost);
+        System.out.println("New Post: " + newPost);
+    }
+
+    public Post getPost(Integer postId) {
+        return repository.getPost(postId);
+    }
+
+    public void updatePost(Post updatedPost) {
+        updatedPost.setDate(new Date());
+        repository.updatePost(updatedPost);
+    }
+
+    public void deletePost(Integer postId) {
+        repository.deletePost(postId);
     }
 }
